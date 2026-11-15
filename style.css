@@ -1,0 +1,115 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --bg: #fff6ec;
+    --card: #ffffff;
+    --ink: #2b1a14;
+    --mute: #8a766b;
+    --line: #f0e2d4;
+    --red: #e3263f;
+    --red-dark: #9e1029;
+    --gold: #ffbf1f;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+}
+a { color: var(--red); }
+
+/* 上の見出し */
+.header { text-align: center; padding: 44px 16px 8px; }
+.header .back { text-decoration: none; color: var(--mute); font-size: 14px; }
+.header .back:hover { color: var(--ink); }
+.header h1 { font-size: 24px; font-weight: 800; margin-top: 10px; }
+.header .date { font-size: 13px; color: var(--mute); margin-top: 4px; }
+
+/* トップ */
+.hero { text-align: center; padding: 40px 16px 8px; }
+.hero img.icon {
+    width: 112px; height: 112px; border-radius: 26px;
+    box-shadow: 0 8px 24px rgba(158, 16, 41, 0.22);
+}
+.hero h1 { font-size: 28px; font-weight: 800; margin-top: 16px; letter-spacing: 0.02em; }
+.hero .lead { color: var(--mute); font-size: 15px; margin-top: 4px; }
+.hero .badge {
+    display: inline-block; margin-top: 18px; padding: 6px 16px; border-radius: 999px;
+    background: var(--red); color: #fff; font-weight: 700; font-size: 14px; text-decoration: none;
+}
+.hero .badge.soon { background: var(--mute); }
+
+.cards {
+    max-width: 680px; margin: 28px auto 56px; padding: 0 16px;
+    display: flex; flex-direction: column; gap: 12px;
+}
+.card {
+    display: flex; align-items: center; gap: 16px; padding: 16px 20px;
+    background: var(--card); border-radius: 16px; text-decoration: none; color: var(--ink);
+    box-shadow: 0 1px 3px rgba(43, 26, 20, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(43, 26, 20, 0.1); }
+.card .card-icon {
+    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.card-icon.red { background: #ffe3e6; }
+.card-icon.gold { background: #fff1c9; }
+.card-icon.blue { background: #e0ecff; }
+.card-icon.green { background: #ddf5e6; }
+.card .card-body { flex: 1; min-width: 0; }
+.card h3 { font-size: 16px; font-weight: 700; }
+.card p { font-size: 13px; color: var(--mute); }
+.card .arrow { color: var(--mute); font-size: 18px; }
+
+/* 本文 */
+.content {
+    max-width: 680px; margin: 24px auto 56px; padding: 32px;
+    background: var(--card); border-radius: 16px; box-shadow: 0 1px 3px rgba(43, 26, 20, 0.06);
+}
+@media (max-width: 720px) {
+    .content { margin-left: 16px; margin-right: 16px; padding: 24px 20px; }
+}
+.content > p { font-size: 15px; }
+.content h2 {
+    font-size: 17px; font-weight: 800; margin: 28px 0 8px; padding-left: 10px;
+    border-left: 4px solid var(--red);
+}
+.content h2:first-child { margin-top: 0; }
+.content p, .content li { font-size: 15px; }
+.content p + p { margin-top: 8px; }
+.content ul, .content ol { padding-left: 1.4em; margin: 6px 0; }
+.content li { margin: 4px 0; }
+.content .note { font-size: 13px; color: var(--mute); }
+
+/* よくある質問 */
+details {
+    border-bottom: 1px solid var(--line); padding: 12px 0;
+}
+details:last-of-type { border-bottom: none; }
+summary {
+    cursor: pointer; font-weight: 700; font-size: 15px; list-style: none; position: relative; padding-right: 24px;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "＋"; position: absolute; right: 0; color: var(--mute); }
+details[open] summary::after { content: "－"; }
+details p { margin-top: 8px; color: #4a3a32; }
+
+/* お問い合わせ */
+.contact-card {
+    display: flex; align-items: center; gap: 16px; padding: 16px 20px; margin: 20px 0 8px;
+    background: var(--bg); border-radius: 14px; text-decoration: none; color: var(--ink);
+}
+.contact-card .card-icon {
+    width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; background: var(--red);
+    display: flex; align-items: center; justify-content: center;
+}
+.contact-card svg { width: 24px; height: 24px; fill: #fff; }
+.contact-card .title { font-weight: 700; }
+.contact-card .desc { font-size: 13px; color: var(--mute); }
+
+footer {
+    text-align: center; padding: 20px 16px 32px; font-size: 12px; color: var(--mute);
+}
+footer a { color: var(--mute); margin: 0 6px; }
