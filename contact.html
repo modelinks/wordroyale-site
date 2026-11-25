@@ -14,27 +14,195 @@
     </div>
 
     <div class="content">
-        <p>ご質問・ご要望・不具合のご報告は、メールでお送りください。</p>
+        <div id="contact-area">
+            <p>ご質問・ご要望・不具合のご報告は、下のフォームからお送りください。</p>
 
-        <a href="mailto:contact@reqme.jp?subject=%E3%83%AF%E3%83%BC%E3%83%89%E3%83%AD%E3%83%AF%E3%82%A4%E3%83%A4%E3%83%AB%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6" class="contact-card">
-            <div class="card-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-            </div>
-            <div>
-                <div class="title">メール</div>
-                <div class="desc">contact@reqme.jp</div>
-            </div>
-        </a>
-        <p class="note">返信まで数日いただくことがあります。</p>
+            <h2>お問い合わせのときのお願い</h2>
+            <ul>
+                <li>iPhoneの機種・iOSのバージョンと、アプリのバージョン（設定の下のほうに出ます）をお知らせください。</li>
+                <li>不具合のときは、いつ・どの画面で・何をしたら起きたかを書いていただけると助かります。</li>
+                <li>問題の誤りは、問題文と答えを添えてください。</li>
+            </ul>
 
-        <h2>お問い合わせのときのお願い</h2>
-        <ul>
-            <li>iPhoneの機種・iOSのバージョンと、アプリのバージョン（設定の下のほうに出ます）をお知らせください。</li>
-            <li>不具合のときは、いつ・どの画面で・何をしたら起きたかを書いていただけると助かります。スクリーンショットもあると確実です。</li>
-            <li>問題の誤りは、問題文と答えを添えてください。</li>
-        </ul>
+            <!-- 送り先はゲームのサーバー（wordbattle の server/src/contact.ts）。サーバーが運営の Discord に知らせる。 -->
+            <form id="contact-form" class="form" novalidate data-endpoint="https://wordroyale.modelinks.workers.dev/v1/contact">
+                <div class="field">
+                    <label for="purpose">お問い合わせの目的<span class="req">必須</span></label>
+                    <div class="select">
+                        <!-- 値はサーバーの CONTACT_PURPOSES と同じにする -->
+                        <select id="purpose" name="purpose" required aria-describedby="purpose-error">
+                            <option value="" selected disabled>選んでください</option>
+                            <option value="question">ご質問</option>
+                            <option value="bug">不具合のご報告</option>
+                            <option value="quiz">問題の誤りのご報告</option>
+                            <option value="request">ご要望・ご意見</option>
+                            <option value="account">アカウント・データについて</option>
+                            <option value="other">その他</option>
+                        </select>
+                    </div>
+                    <p class="error" id="purpose-error" hidden></p>
+                </div>
+
+                <div class="field">
+                    <label for="email">メールアドレス<span class="req">必須</span></label>
+                    <input id="email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" maxlength="254" placeholder="example@example.com" required aria-describedby="email-hint email-error">
+                    <p class="hint" id="email-hint">返信はこのアドレスにお送りします。</p>
+                    <p class="error" id="email-error" hidden></p>
+                </div>
+
+                <div class="field">
+                    <label for="message">お問い合わせ内容<span class="req">必須</span></label>
+                    <textarea id="message" name="message" rows="8" maxlength="1000" required aria-describedby="message-error message-count"></textarea>
+                    <div class="field-foot">
+                        <p class="error" id="message-error" hidden></p>
+                        <span class="count" id="message-count">0 / 1000</span>
+                    </div>
+                </div>
+
+                <!-- ロボットよけ（人には見えない欄。何か入っていれば、サーバーは知らせずに受け流す） -->
+                <div class="hp" aria-hidden="true">
+                    <label for="website">この欄は空のままにしてください</label>
+                    <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+                </div>
+
+                <p class="form-error" id="form-error" role="alert" hidden></p>
+
+                <button type="submit" class="submit" id="submit">送信する</button>
+                <p class="note form-note">送信した内容は、お問い合わせへの対応のためだけに使います（<a href="privacy">プライバシーポリシー</a>）。</p>
+            </form>
+        </div>
+
+        <div id="thanks" class="thanks" hidden>
+            <div class="thanks-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+            </div>
+            <h2 id="thanks-title" tabindex="-1">送信しました</h2>
+            <!-- 狭い画面では、文節（.phrase）の切れ目でだけ折り返す -->
+            <p><span class="phrase">お問い合わせいただき、</span><span class="phrase">ありがとうございます。</span></p>
+            <p><span class="phrase">内容を確認のうえ、</span><span class="phrase">数営業日以内に、</span><span class="phrase">ご入力いただいた</span><span class="phrase">メールアドレスへ</span><span class="phrase">ご返信いたします。</span></p>
+            <p class="thanks-to">返信先：<span id="thanks-email"></span></p>
+            <p class="note"><span class="phrase">返信が届かないときは、</span><span class="phrase">迷惑メールのフォルダも</span><span class="phrase">ご確認ください。</span></p>
+            <a class="thanks-back" href="./">サポートのトップへ</a>
+        </div>
     </div>
 
-    <footer>&copy; 2026 ワードロワイヤル運営</footer>
+    <footer>&copy; 2026 ワードロワイヤル運営 · <a href="privacy">プライバシーポリシー</a></footer>
+
+    <script>
+    (() => {
+        const form = document.getElementById("contact-form");
+        const endpoint = form.dataset.endpoint;
+        const MAX = 1000;
+        // サーバー（server/src/contact.ts の EMAIL）と同じ形
+        const EMAIL = /^[^\s@<>()[\]\\,;:"`]+@[^\s@<>()[\]\\,;:"`.]+(\.[^\s@<>()[\]\\,;:"`.]+)+$/u;
+        const fields = { purpose: form.purpose, email: form.email, message: form.message };
+        const count = document.getElementById("message-count");
+        const formError = document.getElementById("form-error");
+        const button = document.getElementById("submit");
+
+        function setError(name, text) {
+            const input = fields[name];
+            const el = document.getElementById(name + "-error");
+            input.closest(".field").classList.toggle("invalid", Boolean(text));
+            input.setAttribute("aria-invalid", text ? "true" : "false");
+            el.textContent = text || "";
+            el.hidden = !text;
+        }
+
+        function hasError(name) {
+            return fields[name].closest(".field").classList.contains("invalid");
+        }
+
+        function emailError(email) {
+            if (!email) return "メールアドレスを入力してください。";
+            if (email.length > 254 || !EMAIL.test(email)) return "メールアドレスを正しく入力してください。";
+            return "";
+        }
+
+        function updateCount() {
+            const n = fields.message.value.length;
+            count.textContent = n + " / " + MAX;
+            count.classList.toggle("near", n >= MAX - 50);
+        }
+        updateCount();
+
+        // 入れ直したら、そこのエラーを消す
+        fields.purpose.addEventListener("change", () => setError("purpose", ""));
+        fields.email.addEventListener("input", () => {
+            if (hasError("email") && !emailError(fields.email.value.trim())) setError("email", "");
+        });
+        fields.message.addEventListener("input", () => {
+            updateCount();
+            if (hasError("message") && fields.message.value.trim()) setError("message", "");
+        });
+
+        function showFormError(text) {
+            formError.textContent = text;
+            formError.hidden = false;
+        }
+
+        function showThanks(email) {
+            document.getElementById("thanks-email").textContent = email;
+            document.getElementById("contact-area").hidden = true;
+            document.getElementById("thanks").hidden = false;
+            window.scrollTo({ top: 0 });
+            document.getElementById("thanks-title").focus({ preventScroll: true });
+        }
+
+        let sending = false;
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            if (sending) return;
+            formError.hidden = true;
+            const purpose = fields.purpose.value;
+            const email = fields.email.value.trim();
+            const message = fields.message.value.trim();
+            const errors = {
+                purpose: purpose ? "" : "お問い合わせの目的を選んでください。",
+                email: emailError(email),
+                message: message ? "" : "お問い合わせ内容を入力してください。",
+            };
+            for (const name of Object.keys(fields)) setError(name, errors[name]);
+            const first = Object.keys(fields).find((name) => errors[name]);
+            if (first) {
+                fields[first].focus();
+                return;
+            }
+
+            sending = true;
+            button.disabled = true;
+            button.textContent = "送信中…";
+            let done = false;
+            try {
+                const res = await fetch(endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ purpose, email, message, website: form.website.value }),
+                    signal: typeof AbortSignal.timeout === "function" ? AbortSignal.timeout(20000) : undefined,
+                });
+                if (res.ok) {
+                    done = true;
+                    showThanks(email);
+                    return;
+                }
+                let reason = "";
+                try { reason = (await res.json()).error || ""; } catch (_) {}
+                if (reason === "badPurpose") setError("purpose", "お問い合わせの目的を選んでください。");
+                else if (reason === "badEmail") setError("email", "メールアドレスを正しく入力してください。");
+                else if (reason === "badMessage") setError("message", "お問い合わせ内容を" + MAX + "文字以内で入力してください。");
+                else if (res.status === 429) showFormError("続けて送信されたため、受け付けを止めています。1分ほどおいてから、もう一度お試しください。");
+                else showFormError("送信できませんでした。時間をおいて、もう一度お試しください。");
+            } catch (_) {
+                showFormError("送信できませんでした。通信の状態を確かめて、もう一度お試しください。");
+            } finally {
+                sending = false;
+                if (!done) {
+                    button.disabled = false;
+                    button.textContent = "送信する";
+                }
+            }
+        });
+    })();
+    </script>
 </body>
 </html>
