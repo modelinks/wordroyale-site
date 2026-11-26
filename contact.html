@@ -19,8 +19,7 @@
 
             <h2>お問い合わせのときのお願い</h2>
             <ul>
-                <li>iPhoneの機種・iOSのバージョンと、アプリのバージョン（設定の下のほうに出ます）をお知らせください。</li>
-                <li>不具合のときは、いつ・どの画面で・何をしたら起きたかを書いていただけると助かります。</li>
+                <li>不具合のときは、いつ・どの画面で・何をしたら起きたかと、iPhoneの機種・iOSのバージョン・アプリのバージョンを書いていただけると助かります（<a href="version" target="_blank" rel="noopener">調べ方</a>）。</li>
                 <li>問題の誤りは、問題文と答えを添えてください。</li>
             </ul>
 
@@ -52,7 +51,9 @@
 
                 <div class="field">
                     <label for="message">お問い合わせ内容<span class="req">必須</span></label>
-                    <textarea id="message" name="message" rows="8" maxlength="1000" required aria-describedby="message-error message-count"></textarea>
+                    <!-- 「不具合のご報告」のときだけ出す（そのとき内容に機種とバージョンの欄を入れる。下の BUG_TEMPLATE） -->
+                    <p class="hint hint-above" id="message-hint" hidden>機種やバージョンがわからないときは「不明」で大丈夫です（<a href="version" target="_blank" rel="noopener">調べ方</a>）。</p>
+                    <textarea id="message" name="message" rows="8" maxlength="1000" required aria-describedby="message-hint message-error message-count"></textarea>
                     <div class="field-foot">
                         <p class="error" id="message-error" hidden></p>
                         <span class="count" id="message-count">0 / 1000</span>
@@ -119,6 +120,11 @@
             return "";
         }
 
+        function messageError(text) {
+            if (!text.trim() || isUntouchedTemplate(text)) return "お問い合わせ内容を入力してください。";
+            return "";
+        }
+
         function updateCount() {
             const n = fields.message.value.length;
             count.textContent = n + " / " + MAX;
@@ -126,14 +132,38 @@
         }
         updateCount();
 
+        // 「不具合のご報告」のときは、内容のはじめに機種とバージョンの欄を入れる（わからなければ「不明」でよい）。
+        // 書き足していない欄だけのまま送ろうとしたら、内容が空のときと同じに扱う
+        const BUG_TEMPLATE = "iPhoneの機種：\niOSのバージョン：\nアプリのバージョン：\n\n起きたこと：\n";
+        const BUG_FIRST_LINE = BUG_TEMPLATE.split("\n")[0];
+        const messageHint = document.getElementById("message-hint");
+        const isUntouchedTemplate = (text) => text.trim() === BUG_TEMPLATE.trim();
+
+        function applyPurpose() {
+            const isBug = fields.purpose.value === "bug";
+            messageHint.hidden = !isBug;
+            const text = fields.message.value;
+            if (isBug && !text.includes(BUG_FIRST_LINE)) {
+                // 先に書いてあった文は消さずに、欄の下（起きたこと）へ回す
+                fields.message.value = (BUG_TEMPLATE + text.trim()).slice(0, MAX);
+            } else if (!isBug && isUntouchedTemplate(text)) {
+                fields.message.value = "";
+            }
+            updateCount();
+        }
+        applyPurpose();
+
         // 入れ直したら、そこのエラーを消す
-        fields.purpose.addEventListener("change", () => setError("purpose", ""));
+        fields.purpose.addEventListener("change", () => {
+            setError("purpose", "");
+            applyPurpose();
+        });
         fields.email.addEventListener("input", () => {
             if (hasError("email") && !emailError(fields.email.value.trim())) setError("email", "");
         });
         fields.message.addEventListener("input", () => {
             updateCount();
-            if (hasError("message") && fields.message.value.trim()) setError("message", "");
+            if (hasError("message") && messageError(fields.message.value) === "") setError("message", "");
         });
 
         function showFormError(text) {
@@ -160,7 +190,7 @@
             const errors = {
                 purpose: purpose ? "" : "お問い合わせの目的を選んでください。",
                 email: emailError(email),
-                message: message ? "" : "お問い合わせ内容を入力してください。",
+                message: messageError(message),
             };
             for (const name of Object.keys(fields)) setError(name, errors[name]);
             const first = Object.keys(fields).find((name) => errors[name]);
